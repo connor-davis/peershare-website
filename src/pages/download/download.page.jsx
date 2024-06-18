@@ -104,6 +104,7 @@ const releaseInfo = {
 export default function DownloadPage() {
   const [platform] = useDeviceSelectors(window.navigator.userAgent);
   const [releases, setReleases] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     const disposeableTimeout = setTimeout(async () => {
@@ -115,6 +116,8 @@ export default function DownloadPage() {
       const json = JSON.parse(text);
 
       setReleases(json);
+
+      setLoading(false);
     }, 100);
 
     return () => {
@@ -133,6 +136,7 @@ export default function DownloadPage() {
           </Label>
         </div>
         <div className="flex flex-col items-center truncate">
+          {isLoading && "Loading Releases"}
           {releases.length > 0 &&
             releases.map((release, index) => (
               <div
@@ -144,7 +148,9 @@ export default function DownloadPage() {
                   {release.assets.length > 0 &&
                     release.assets.map((asset) => (
                       <>
-                        <Label className="text-muted-foreground">{asset.name}</Label>
+                        <Label className="text-muted-foreground">
+                          {asset.name}
+                        </Label>
                         <div className="flex items-center justify-end">
                           <Link to={asset.browser_download_url} target="_blank">
                             <Button size="icon">
